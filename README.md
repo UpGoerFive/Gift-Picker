@@ -9,11 +9,11 @@ The installation is fairly straightforward, but I'd recommend making a shortcut 
 ### Using this program
 Clone or download the Gift-picker.scm file, and open in Dr. Racket.
 Click the run button in the top left, this will open an Interactions Panel in the bottom half of the window.
-Make sure the lower lefthand corner shows **Determine language from source** and swith it if it doesn't.
+Make sure the lower lefthand corner shows **Determine language from source** and switch it if it doesn't.
 This program will take a list of names, a list of inclusions (forced pairings), and a list of exclusions.
 
 It's helpful, but not necessary, to define each of these lists before calling them in the procedure.
-This is done by entering into the interactions prompt `(define `, followed by a shorthand name, and then the list itself.
+This is done by entering into the interactions prompt `(define ...)`, followed by a shorthand name, and then the list itself.
 As an example:
 
 `(define TEST '(a b c d)`
@@ -26,7 +26,7 @@ or
 ```
 
 Lists in Scheme can be made easily either by using `(list ...)` or `'(...)` with spaces separating the entries
-Nested lists (which we will need to use) can simply be added with interior parentheses, but if using `(list `,
+Nested lists (which we will need to use) can simply be added with interior parentheses, but if using `(list ...)`,
 internal lists will need to use `(list )` or `'( )`, that is:
 `(list (list 'a 'b) (list 'c 'd))`, `(list '(a b) '(c d))`, and `'((a b) (c d))` are all equivalent, the last form being recommended.
 
