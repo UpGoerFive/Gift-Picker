@@ -9,6 +9,7 @@ The installation is fairly straightforward, but I'd recommend making a shortcut 
 ### Using this program
 Clone or download the Gift-picker.scm file, and open in Dr. Racket.
 Click the run button in the top left, this will open an Interactions Panel in the bottom half of the window.
+Make sure the lower lefthand corner shows **Determine language from source** and swith it if it doesn't.
 This program will take a list of names, a list of inclusions (forced pairings), and a list of exclusions.
 
 It's helpful, but not necessary, to define each of these lists before calling them in the procedure.
@@ -56,3 +57,13 @@ or
 After doing this, the program can be called by entering:
 `(gift-picker NAMES INCLUDE EXCLUDE)`
 with the lists in that order. The names list is required but either or both of the others may be left out.
+
+Dr. Racket provides parentheses highlighting, which is helpful. 
+Also as stated above, it's possible to just enter the lists in order in the `(gift-picker)` call,
+but this is annoying to do. 
+
+I'll likely spend some time to make this easier to use. Hopefully with a little more flexibility in the 
+Inclusion/Exclusion lists and the ability to just run this on a text file. If things go particularly well,
+I'll manage to make it work through Google Slides.
+
+Thanks!
