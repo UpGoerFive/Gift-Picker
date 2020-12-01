@@ -1,6 +1,6 @@
 #lang racket
 
-(define (gift-pairings people inclusions exclusions)
+(define (gift-picker people inclusions exclusions)
   (show-gifts (pick-options (add-pairs (shuffle people) inclusions exclusions) '())))
 
 (define (make-pairs people)
