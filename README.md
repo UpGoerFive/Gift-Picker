@@ -56,7 +56,8 @@ or
 
 After doing this, the program can be called by entering:
 `(gift-picker NAMES INCLUDE EXCLUDE)`
-with the lists in that order. The names list is required but either or both of the others may be left out.
+with the lists in that order. The names list is required but either or both of the others may be left out
+by substituting an empty list as in `'()`.
 
 Dr. Racket provides parentheses highlighting, which is helpful. 
 Also as stated above, it's possible to just enter the lists in order in the `(gift-picker)` call,
