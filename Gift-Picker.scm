@@ -1,7 +1,7 @@
 #lang racket
 
 (define (gift-picker people inclusions exclusions)
-  (show-gifts (pick-options (add-pairs (shuffle people) inclusions exclusions) '())))
+  (show-gifts (pick-options (combos-table (shuffle people) (force-inclusions inclusions (remove-exclusions (make-pairs (shuffle people))  exclusions)) '()) '())))
 
 (define (make-pairs people)
   (define (pairs-helper combos result)
@@ -13,9 +13,6 @@
 
 (define (remove-exclusions shuffled exclusions)
   (filter (lambda (x) (not (member x exclusions))) shuffled))
-
-(define (add-pairs people inclusions exclusions)
-    (combos-table people (force-inclusions inclusions (remove-exclusions (make-pairs people)  exclusions)) '()))
 
 (define (force-inclusions inc combos)
   (if (null? inc)
