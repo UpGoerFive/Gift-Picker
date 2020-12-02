@@ -16,13 +16,13 @@ It's helpful, but not necessary, to define each of these lists before calling th
 This is done by entering into the interactions prompt `(define ...)`, followed by a shorthand name, and then the list itself.
 As an example:
 
-`(define TEST '(a b c d)`
+`(define TEST '(a b c d))`
 or
 ```
 (define TEST '(a
                b
                c
-               d)
+               d))
 ```
 
 Lists in Scheme can be made easily either by using `(list ...)` or `'(...)` with spaces separating the entries
