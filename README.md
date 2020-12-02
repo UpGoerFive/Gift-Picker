@@ -27,7 +27,7 @@ or
 
 Lists in Scheme can be made easily either by using `(list ...)` or `'(...)` with spaces separating the entries.
 Nested lists (which we will need to use) can simply be added with interior parentheses, but if using `(list ...)`,
-internal lists will need to use `(list )` or `'( )`, that is:
+internal lists will need to use `(list ...)` or `'(...)`, that is:
 `(list (list 'a 'b) (list 'c 'd))`, `(list '(a b) '(c d))`, and `'((a b) (c d))` are all equivalent, the last form being recommended.
 
 The list of names can be a simple list with spaces, but if you want to include last names, those entries will need to be their own nested list.
