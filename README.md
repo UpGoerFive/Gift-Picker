@@ -3,7 +3,7 @@ A small tool to pair gift givers and recipients for Secret Santa
 
 ### Installing Racket
 This program was written using Racket, a Scheme derivative.
-You can download Racket [here](https://download.racket-lang.org/)
+You can download Racket [here](https://download.racket-lang.org/).
 The installation is fairly straightforward, but I'd recommend making a shortcut to the Dr. Racket IDE that's included, as it's easiest to run the program there.
 
 ### Using this program
