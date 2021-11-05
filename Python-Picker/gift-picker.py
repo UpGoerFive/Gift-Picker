@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 import random
 import csv
 import sys
+from pathlib import Path
 
 
 @dataclass
@@ -49,7 +50,8 @@ class Santa:
 
 
 if __name__ == "__main__":
-    with open(sys.argv[1], newline='') as filename:
+    sourcename = Path(sys.argv[1])
+    with open(sourcename, newline='') as filename:
         Santa_reader = csv.reader(filename)
         gift_list = []
         for row in Santa_reader:
@@ -59,4 +61,12 @@ if __name__ == "__main__":
     gift_people = [Participant(entry[0], str(entry[1]), set(entry[2].split(', '))) for entry in gift_list]
 
     gift_picker = Santa(gift_people)
-    gift_picker.give_gifts()
+    out_list = [(giver.name, giver.recipient) for giver in gift_picker.give_gifts()]
+
+    destination = sourcename.parent.joinpath("paired-sheet.csv")
+
+    with open(destination, "w", newline='') as filename:
+        Santa_writer = csv.writer(filename)
+        Santa_writer.writerows(out_list)
+
+    
