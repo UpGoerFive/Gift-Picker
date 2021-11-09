@@ -1,4 +1,4 @@
-## Gift-Picker
+## The Old Racket Version
 A small tool to pair gift givers and recipients for Secret Santa
 
 ### Installing Racket
