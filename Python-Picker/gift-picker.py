@@ -49,6 +49,25 @@ class Santa:
         return self._finished
 
 
+class SheetError(Exception):
+    """Raised when the input sheet is unsuitable for creating pairings."""
+    def __init__(self, expression, message):
+        """Expression that caused the exception and a message explaining it"""
+        self.expression = expression
+        self.message = message
+
+
+def check_people(people: list):
+    """Checks list of entry rows for usability and strips column headings."""
+    first_entry = people[0][0].title()
+    if first_entry in ["Name", "Names", "People", "Participants"]:
+        people.pop(0)
+    givers = [entry[0].title() for entry in people]
+    if len(givers) != len(set(givers)):
+        raise SheetError
+    return [Participant(entry[0], str(entry[1]), set(entry[2].split(', '))) for entry in people]
+
+
 if __name__ == "__main__":
     sourcename = Path(sys.argv[1])
     with open(sourcename, newline='') as filename:
@@ -57,8 +76,7 @@ if __name__ == "__main__":
         for row in Santa_reader:
             gift_list.append(row)
 
-    gift_list.pop(0)
-    gift_people = [Participant(entry[0], str(entry[1]), set(entry[2].split(', '))) for entry in gift_list]
+    gift_people = check_people(gift_list)
 
     gift_picker = Santa(gift_people)
     out_list = [(giver.name, giver.recipient) for giver in gift_picker.give_gifts()]
@@ -68,5 +86,3 @@ if __name__ == "__main__":
     with open(destination, "w", newline='') as filename:
         Santa_writer = csv.writer(filename)
         Santa_writer.writerows(out_list)
-
-    
