@@ -42,7 +42,7 @@ class Santa:
             try:
                 person.recipient = random.choice(list(person.possible_recipients))
             except IndexError:
-                person.recipient = "This person had no available options, revise initial spreadsheet."
+                person.recipient = "!!!This person had no available options, revise initial spreadsheet.!!!"
 
             self._finished.append(person)
 
