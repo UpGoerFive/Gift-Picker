@@ -18,7 +18,7 @@ is just a list of names in the cell with comma separation (so `Kirk, Spock, Pica
 
 After cloning the repo, change into the repo directory with the `cd` command; you can run the picker without doing this, but the filepaths to type in 
 will be more cumbersome. Likewise either move your sheet file into this directory or copy its whole path to use. The program can be run with
-`$ python gift-picker.py <name-of-your-sheet.csv>` and will create a new paired-sheet.csv file in the same directory as your *initial* spreadsheet. Rerunning the 
+`$ python gift_picker.py <name-of-your-sheet.csv>` and will create a new paired-sheet.csv file in the same directory as your *initial* spreadsheet. Rerunning the 
 program will wipe this file so be sure to rename it or move it before doing so.
 
 Still very much a work in progress, but getting there!
