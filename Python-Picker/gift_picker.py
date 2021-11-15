@@ -59,6 +59,8 @@ class SheetError(Exception):
 
 def check_people(people: list):
     """Checks list of entry rows for usability and strips column headings."""
+    if not people:
+        return []
     first_entry = people[0][0].title()
     if first_entry in ["Name", "Names", "People", "Participants"]:
         people.pop(0)
@@ -68,14 +70,16 @@ def check_people(people: list):
     return [Participant(entry[0], str(entry[1]), set(entry[2].split(', '))) for entry in people]
 
 
+def create_sheet(source_name):
+    with open(source_name, newline='') as file_name:
+        santa_reader = csv.reader(file_name)
+        person_list = [row for row in santa_reader]
+    return person_list
+
+
 if __name__ == "__main__":
     sourcename = Path(sys.argv[1])
-    with open(sourcename, newline='') as filename:
-        Santa_reader = csv.reader(filename)
-        gift_list = []
-        for row in Santa_reader:
-            gift_list.append(row)
-
+    gift_list = create_sheet(sourcename)
     gift_people = check_people(gift_list)
 
     gift_picker = Santa(gift_people)
