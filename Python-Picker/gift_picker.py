@@ -31,12 +31,12 @@ class Santa:
         for person in self._people:
             if person.recipient and person.recipient in self._names:
                 self._finished.append(person)
-            else:  # Updates available recipient options before adding to unmatched dictionary
+            else:  # Updates available recipient options before adding to unmatched list
                 person.possible_recipients = {giver.name for giver in self._people} - person.excluded - {person.name}
                 self._unmatched.append(person)
 
         # Sort unmatched list so more restrictive entries will be paired first
-        self._unmatched = sorted(self._unmatched, key=lambda giver: len(giver.excluded), reverse=True)
+        self._unmatched = sorted(self._unmatched, key=lambda giver: len(giver.possible_recipients))
 
         for person in self._unmatched:
             person.possible_recipients = person.possible_recipients - {giver.recipient for giver in self._finished}

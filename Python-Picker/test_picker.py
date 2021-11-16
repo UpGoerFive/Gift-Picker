@@ -3,9 +3,10 @@ import pytest
 import random
 from pathlib import Path
 
-@pytest.fixture(params=[Path(r".\Testfiles\Christmas List 2021.xlsx - Sheet1.csv"),
-                        Path(r".\Testfiles\Santa Test sheet - Sheet1(3).csv"),
-                        Path(r".\Testfiles\Santa Test sheet2 - Santa Test sheet - Sheet1(1).csv")])
+
+@pytest.fixture(params=[Path(r".\Testfiles\ChristmasList.csv"),
+                        Path(r"Testfiles/SantaTestsheet1.csv"),
+                        Path(r"Testfiles/SantaTestsheet2.csv")])
 def sheet_data(request):
     return check_people(create_sheet(request.param))
 
@@ -53,6 +54,14 @@ class TestPicker:
 
     def test_full(self, sheet_data):
         picker = Santa(sheet_data)
+        out_pairing = picker.give_gifts()
+        names = [person.name for person in out_pairing]
+        for person in out_pairing:
+            assert person.recipient in names and person.recipient != person.name and person.recipient not in person.excluded
+
+    @pytest.mark.xfail
+    def test_ivalid(self, invalid):
+        picker = Santa(invalid)
         out_pairing = picker.give_gifts()
         names = [person.name for person in out_pairing]
         for person in out_pairing:
