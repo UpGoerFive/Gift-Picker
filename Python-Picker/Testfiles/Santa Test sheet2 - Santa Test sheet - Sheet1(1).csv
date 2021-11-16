@@ -1,0 +1,13 @@
+Names,Inclusions,Exclusions
+Nathaniel,Jennifer,Hannah
+Hannah,,"Nathaniel, Nico"
+Bret,Alan,Marcee
+Marcee,Joe,"Anne, Jared"
+Jared,Nico,
+Jennifer,Victoria,"Nathaniel, Jared, Hannah"
+Nico,,"Victoria, Anne"
+Alan,,"Mindy, Joe"
+Victoria,,"Nathaniel, Bret"
+Mindy,Joe,
+Joe,Jennifer,Hannah
+Anne,,"Jared, Marcee, Bret"

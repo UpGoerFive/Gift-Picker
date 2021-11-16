@@ -23,12 +23,13 @@ class Santa:
         self._people = people
         self._unmatched = []
         self._finished = []
+        self._names = [person.name for person in people]
 
     def give_gifts(self):
         """Finds forced pairings first, assigns to members with exclusions listed next, then randomly assigns everyone
         leftover."""
         for person in self._people:
-            if person.recipient:
+            if person.recipient and person.recipient in self._names:
                 self._finished.append(person)
             else:  # Updates available recipient options before adding to unmatched dictionary
                 person.possible_recipients = {giver.name for giver in self._people} - person.excluded - {person.name}
@@ -46,28 +47,30 @@ class Santa:
 
             self._finished.append(person)
 
-        return self._finished
+        return self._finished  # Current version fails on certain runs, in part because the unmatched list is not being
+    # updated as each selection is made. As a result certain entries that had many options in the beginning have none
+    # as selections are made. This could be solved by brute forcing all possibilities and stopping as soon as a success
+    # happens, or by rearranging the list and possibility counters after each selection. Second option is probably
+    # better because I think this is O(n!) vs O(n^2), though the list rearrangement will have a longer minimum I believe
 
 
 class SheetError(Exception):
     """Raised when the input sheet is unsuitable for creating pairings."""
-    def __init__(self, expression, message):
-        """Expression that caused the exception and a message explaining it"""
-        self.expression = expression
+    def __init__(self, message):
         self.message = message
 
 
 def check_people(people: list):
     """Checks list of entry rows for usability and strips column headings."""
     if not people:
-        return []
+        raise SheetError("Sheet is empty.")
     first_entry = people[0][0].title()
     if first_entry in ["Name", "Names", "People", "Participants"]:
         people.pop(0)
     givers = [entry[0].title() for entry in people]
     if len(givers) != len(set(givers)):
-        raise SheetError
-    return [Participant(entry[0], str(entry[1]), set(entry[2].split(', '))) for entry in people]
+        raise SheetError("Duplicate names are present, fix input sheet.")
+    return [Participant(entry[0].title(), str(entry[1]).title(), set(entry[2].title().split(', '))) for entry in people]
 
 
 def create_sheet(source_name):
