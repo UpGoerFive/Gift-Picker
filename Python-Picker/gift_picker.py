@@ -39,9 +39,12 @@ class Santa:
         self._unmatched = sorted(self._unmatched, key=lambda giver: len(giver.possible_recipients))
 
         for person in self._unmatched:
-            person.possible_recipients = person.possible_recipients - {giver.recipient for giver in self._finished}
             try:
-                person.recipient = random.choice(list(person.possible_recipients))
+                candidate = random.choice(list(person.possible_recipients))
+                person.recipient = candidate
+                for giver in self._unmatched:
+                    giver.possible_recipients = giver.possible_recipients - {candidate}
+                self._unmatched = sorted(self._unmatched, key=lambda giver: len(giver.possible_recipients))
             except IndexError:
                 person.recipient = "!!!This person had no available options, revise initial spreadsheet.!!!"
 
