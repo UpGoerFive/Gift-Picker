@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-import random
 import csv
 import sys
 from pathlib import Path
@@ -11,7 +10,6 @@ class Participant:
     recipient: str = ''
     excluded: set = field(default_factory=set)
     possible_recipients: set = field(default_factory=set)
-    received_from_count: int = 0
 
     def __str__(self):
         return f"{self.name} gives a gift to {self.recipient}. They could not gift to {self.excluded}, and had {self.possible_recipients} to choose from."
@@ -23,7 +21,9 @@ class Santa:
         self._people = people
         self._unmatched = []
         self._finished = []
-        self._names = [person.name for person in people]
+        self.received = {person.recipient for person in people}
+        self.received.difference_update({''})
+        self._names = {person.name for person in people}
 
     def give_gifts(self):
         """Finds forced pairings first, assigns to members with exclusions listed next, then randomly assigns everyone
@@ -31,30 +31,31 @@ class Santa:
         for person in self._people:
             if person.recipient and person.recipient in self._names:
                 self._finished.append(person)
-            else:  # Updates available recipient options before adding to unmatched list
-                person.possible_recipients = {giver.name for giver in self._people} - person.excluded - {person.name}
+            else:
+                person.excluded.update({person.name})
+                person.possible_recipients = self._names - person.excluded - self.received
                 self._unmatched.append(person)
 
         # Sort unmatched list so more restrictive entries will be paired first
         self._unmatched = sorted(self._unmatched, key=lambda giver: len(giver.possible_recipients))
 
-        for person in self._unmatched:
+        while self._unmatched:
+            person = self._unmatched.pop(0)  # person has the least possible options currently
             try:
-                candidate = random.choice(list(person.possible_recipients))
-                person.recipient = candidate
+                person.recipient = person.possible_recipients.pop()
+                self.received.update({person.recipient})
                 for giver in self._unmatched:
-                    giver.possible_recipients = giver.possible_recipients - {candidate}
+                    # removes candidate from options for others
+                    giver.possible_recipients.difference_update({person.recipient})
+                # The unmatched list needs to be sorted again to prevent running into a person with no options at the
+                # end of the list.
                 self._unmatched = sorted(self._unmatched, key=lambda giver: len(giver.possible_recipients))
-            except IndexError:
+            except KeyError:
                 person.recipient = "!!!This person had no available options, revise initial spreadsheet.!!!"
 
             self._finished.append(person)
 
-        return self._finished  # Current version fails on certain runs, in part because the unmatched list is not being
-    # updated as each selection is made. As a result certain entries that had many options in the beginning have none
-    # as selections are made. This could be solved by brute forcing all possibilities and stopping as soon as a success
-    # happens, or by rearranging the list and possibility counters after each selection. Second option is probably
-    # better because I think this is O(n!) vs O(n^2), though the list rearrangement will have a longer minimum I believe
+        return self._finished
 
 
 class SheetError(Exception):
@@ -67,7 +68,7 @@ def check_people(people: list):
     """Checks list of entry rows for usability and strips column headings."""
     if not people:
         raise SheetError("Sheet is empty.")
-    first_entry = people[0][0].title()
+    first_entry = people[0][0].title()  # Checking for column titles.
     if first_entry in ["Name", "Names", "People", "Participants"]:
         people.pop(0)
     givers = [entry[0].title() for entry in people]

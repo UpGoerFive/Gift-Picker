@@ -55,9 +55,10 @@ class TestPicker:
     def test_full(self, sheet_data):
         picker = Santa(sheet_data)
         out_pairing = picker.give_gifts()
-        names = [person.name for person in out_pairing]
+        names = {person.name for person in out_pairing}
         for person in out_pairing:
             assert person.recipient in names and person.recipient != person.name and person.recipient not in person.excluded
+        assert picker.received == names
 
     @pytest.mark.xfail
     def test_ivalid(self, invalid):
