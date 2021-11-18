@@ -6,7 +6,10 @@ from pathlib import Path
 
 @pytest.fixture(params=[Path(r".\Testfiles\ChristmasList.csv"),
                         Path(r"Testfiles/SantaTestsheet1.csv"),
-                        Path(r"Testfiles/SantaTestsheet2.csv")])
+                        Path(r"Testfiles/SantaTestsheet2.csv"),
+                        Path(r"Testfiles/MoreRestrictedSantatest - Sheet1.csv"),
+                        Path(r"Testfiles/OneSolutionSantatest - Sheet1.csv"),
+                        Path(r"Testfiles/SantatestNoRestrictions - Sheet1.csv")])
 def sheet_data(request):
     return check_people(create_sheet(request.param))
 

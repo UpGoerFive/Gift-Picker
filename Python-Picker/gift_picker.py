@@ -12,7 +12,7 @@ class Participant:
     possible_recipients: set = field(default_factory=set)
 
     def __str__(self):
-        return f"{self.name} gives a gift to {self.recipient}. They could not gift to {self.excluded}, and had {self.possible_recipients} to choose from."
+        return f"{self.name} gives a gift to {self.recipient}. They could not gift to {self.excluded}, and had {self.possible_recipients} to choose from. "
 
 
 class Santa:
@@ -37,7 +37,7 @@ class Santa:
                 self._unmatched.append(person)
 
         # Sort unmatched list so more restrictive entries will be paired first
-        self._unmatched = sorted(self._unmatched, key=lambda giver: len(giver.possible_recipients), reverse=True)
+        self._unmatched = sorted(self._unmatched, key=lambda matcher: len(matcher.possible_recipients), reverse=True)
 
         while self._unmatched:
             person = self._unmatched.pop()  # person has the least possible options currently
@@ -49,7 +49,9 @@ class Santa:
                     giver.possible_recipients.difference_update({person.recipient})
                 # The unmatched list needs to be sorted again to prevent running into a person with no options at the
                 # end of the list.
-                self._unmatched = sorted(self._unmatched, key=lambda giver: len(giver.possible_recipients), reverse=True)
+
+                self._unmatched = sorted(self._unmatched, key=lambda matcher: len(matcher.possible_recipients), reverse=True)
+
             except KeyError:
                 person.recipient = "!!!This person had no available options, revise initial spreadsheet.!!!"
 
@@ -74,7 +76,9 @@ def check_people(people: list):
     givers = [entry[0].title() for entry in people]
     if len(givers) != len(set(givers)):
         raise SheetError("Duplicate names are present, fix input sheet.")
-    return [Participant(entry[0].title(), str(entry[1]).title(), set(entry[2].title().split(', '))) for entry in people]
+    return [Participant(entry[0].title(),
+                        str(entry[1]).title() if len(entry) >= 2 else '',
+                        set(entry[2].title().split(', ')) if len(entry) > 2 else set()) for entry in people]
 
 
 def create_sheet(source_name):
@@ -85,12 +89,13 @@ def create_sheet(source_name):
 
 
 if __name__ == "__main__":
+    # noinspection SpellCheckingInspection
     sourcename = Path(sys.argv[1])
     gift_list = create_sheet(sourcename)
     gift_people = check_people(gift_list)
 
     gift_picker = Santa(gift_people)
-    out_list = [(giver.name, giver.recipient) for giver in gift_picker.give_gifts()]
+    out_list = [(paired.name, paired.recipient) for paired in gift_picker.give_gifts()]
 
     destination = sourcename.parent.joinpath("paired-sheet.csv")
 
