@@ -37,10 +37,10 @@ class Santa:
                 self._unmatched.append(person)
 
         # Sort unmatched list so more restrictive entries will be paired first
-        self._unmatched = sorted(self._unmatched, key=lambda giver: len(giver.possible_recipients))
+        self._unmatched = sorted(self._unmatched, key=lambda giver: len(giver.possible_recipients), reverse=True)
 
         while self._unmatched:
-            person = self._unmatched.pop(0)  # person has the least possible options currently
+            person = self._unmatched.pop()  # person has the least possible options currently
             try:
                 person.recipient = person.possible_recipients.pop()
                 self.received.update({person.recipient})
@@ -49,7 +49,7 @@ class Santa:
                     giver.possible_recipients.difference_update({person.recipient})
                 # The unmatched list needs to be sorted again to prevent running into a person with no options at the
                 # end of the list.
-                self._unmatched = sorted(self._unmatched, key=lambda giver: len(giver.possible_recipients))
+                self._unmatched = sorted(self._unmatched, key=lambda giver: len(giver.possible_recipients), reverse=True)
             except KeyError:
                 person.recipient = "!!!This person had no available options, revise initial spreadsheet.!!!"
 
