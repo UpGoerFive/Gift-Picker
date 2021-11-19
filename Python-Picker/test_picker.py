@@ -4,7 +4,7 @@ import random
 from pathlib import Path
 
 
-@pytest.fixture(params=[Path(r".\Testfiles\ChristmasList.csv"),
+@pytest.fixture(params=[Path(r"Testfiles/ChristmasList.csv"),
                         Path(r"Testfiles/SantaTestsheet1.csv"),
                         Path(r"Testfiles/SantaTestsheet2.csv"),
                         Path(r"Testfiles/MoreRestrictedSantatest - Sheet1.csv"),
