@@ -1,7 +1,9 @@
 from dataclasses import dataclass, field
 import csv
-import sys
+import argparse
 from pathlib import Path
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename, asksaveasfilename
 
 
 @dataclass
@@ -88,17 +90,28 @@ def create_sheet(source_name):
     return person_list
 
 
-if __name__ == "__main__":
-    # noinspection SpellCheckingInspection
-    sourcename = Path(sys.argv[1])
-    gift_list = create_sheet(sourcename)
-    gift_people = check_people(gift_list)
-
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("infile", nargs="?", default=None)
+    parser.add_argument("outfile", nargs="?", default=None)
+    args = parser.parse_args()
+    if not args.infile:
+        # tkinter file dialog taken from Stack Overflow
+        Tk().withdraw()  # we don't want a full GUI, so keep the root window from appearing
+        source_name = Path(askopenfilename())  # show an "Open" dialog box and return the path to the selected file
+    else:
+        source_name = args.infile
+    gift_people = check_people(create_sheet(source_name))
     gift_picker = Santa(gift_people)
     out_list = [(paired.name, paired.recipient) for paired in gift_picker.give_gifts()]
 
-    destination = sourcename.parent.joinpath("paired-sheet.csv")
+    destination = Path(asksaveasfilename()) if not args.outfile else Path(args.outfile)
+    destination = destination.with_suffix(".csv")
 
     with open(destination, "w", newline='') as filename:
         Santa_writer = csv.writer(filename)
         Santa_writer.writerows(out_list)
+
+
+if __name__ == "__main__":
+    main()

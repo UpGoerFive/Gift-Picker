@@ -18,8 +18,11 @@ The `Exclusions` list
 is just a list of names in the cell with comma-space separation (so `Kirk, Spock, Picard`). All names need to be unique.
 
 After cloning the repo, change into the repo directory with the `cd` command; you can run the picker without doing this, but the filepaths to type in 
-will be more cumbersome. Likewise either move your sheet file into this directory or copy its whole path to use. The program can be run with
-`$ python gift_picker.py <name-of-your-sheet.csv>` and will create a new paired-sheet.csv file in the same directory as your *initial* spreadsheet. Rerunning the 
-program will wipe this file so be sure to rename it or move it before doing so.
+will be more cumbersome. Likewise either move your sheet file into this directory or copy its whole path to use. The program can be run with either:
 
-Still very much a work in progress, but getting there!
+* `$ python gift_picker.py` this will bring up a file dialog to select your input file from, and select where you would like the output to go.
+* `$ python gift_picker.py <name-of-your-sheet.csv> <new-name-to-write-to.csv>` if you want to specify the file paths in the command.
+ 
+You may need to run it with `python3` instead, depending on if there's a python 2 version on your system.
+
+The program has been tested and works, but I'm still adding features.
