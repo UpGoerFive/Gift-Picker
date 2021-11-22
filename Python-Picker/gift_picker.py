@@ -109,8 +109,8 @@ def main():
     destination = destination.with_suffix(".csv")
 
     with open(destination, "w", newline='') as filename:
-        Santa_writer = csv.writer(filename)
-        Santa_writer.writerows(out_list)
+        santa_writer = csv.writer(filename)
+        santa_writer.writerows(out_list)
 
 
 if __name__ == "__main__":
