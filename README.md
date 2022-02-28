@@ -2,4 +2,4 @@
 A small tool to pair gift givers and recipients for Secret Santa
 
 
-The most current version is the python-picker, though it's not totally functional yet. After testing and some updates it should be good to go, at which point I might archive the Racket version, or leave it around for fun.
+The most current version is `python-picker`, it's only written with modules from the standard library, so it should be usable on any Python 3.7+ installation.
