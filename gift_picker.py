@@ -86,7 +86,7 @@ def check_people(people: list):
 def create_sheet(source_name):
     with open(source_name, newline='') as file_name:
         santa_reader = csv.reader(file_name)
-        person_list = [row for row in santa_reader]
+        person_list = list(santa_reader)
     return person_list
 
 
