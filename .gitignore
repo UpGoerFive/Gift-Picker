@@ -144,3 +144,7 @@ cython_debug/
 # IDE files
 *.idea
 *.vscode
+*.swp
+
+# Project envs
+gift-env/
