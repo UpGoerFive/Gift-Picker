@@ -83,11 +83,14 @@ def check_people(people: list):
                         set(entry[2].title().split(', ')) if len(entry) > 2 else set()) for entry in people]
 
 
-def create_sheet(source_name):
+def get_people(source_name):
     with open(source_name, newline='') as file_name:
         santa_reader = csv.reader(file_name)
         person_list = list(santa_reader)
     return person_list
+
+
+def 
 
 
 def main():
@@ -101,7 +104,7 @@ def main():
         source_name = Path(askopenfilename())  # show an "Open" dialog box and return the path to the selected file
     else:
         source_name = args.infile
-    gift_people = check_people(create_sheet(source_name))
+    gift_people = check_people(get_people(source_name))
     gift_picker = Santa(gift_people)
     out_list = [(paired.name, paired.recipient) for paired in gift_picker.give_gifts()]
 
