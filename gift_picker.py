@@ -84,13 +84,22 @@ def check_people(people: list):
 
 
 def get_people(source_name):
+    """
+    Reads input csv and puts each entry into a list.
+    """
     with open(source_name, newline='') as file_name:
         santa_reader = csv.reader(file_name)
         person_list = list(santa_reader)
     return person_list
 
 
-def 
+def create_out_sheet(destination):
+    """
+    Outputs list to new csv based on destination path.
+    """
+    with open(destination, "w", newline='') as filename:
+        santa_writer = csv.writer(filename)
+        santa_writer.writerows(out_list)
 
 
 def main():
@@ -111,9 +120,7 @@ def main():
     destination = Path(args.outfile) if args.outfile else Path(asksaveasfilename())
     destination = destination.with_suffix(".csv")
 
-    with open(destination, "w", newline='') as filename:
-        santa_writer = csv.writer(filename)
-        santa_writer.writerows(out_list)
+    create_out_sheet(destination)
 
 
 if __name__ == "__main__":
