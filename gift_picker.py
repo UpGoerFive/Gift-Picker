@@ -105,7 +105,7 @@ def main():
     gift_picker = Santa(gift_people)
     out_list = [(paired.name, paired.recipient) for paired in gift_picker.give_gifts()]
 
-    destination = Path(asksaveasfilename()) if not args.outfile else Path(args.outfile)
+    destination = Path(args.outfile) if args.outfile else Path(asksaveasfilename())
     destination = destination.with_suffix(".csv")
 
     with open(destination, "w", newline='') as filename:
