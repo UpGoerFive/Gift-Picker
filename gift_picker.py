@@ -93,7 +93,7 @@ def get_people(source_name):
     return person_list
 
 
-def create_out_sheet(destination):
+def create_out_sheet(destination, out_list):
     """
     Outputs list to new csv based on destination path.
     """
@@ -120,7 +120,7 @@ def main():
     destination = Path(args.outfile) if args.outfile else Path(asksaveasfilename())
     destination = destination.with_suffix(".csv")
 
-    create_out_sheet(destination)
+    create_out_sheet(destination, out_list)
 
 
 if __name__ == "__main__":
