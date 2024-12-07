@@ -8,13 +8,17 @@ from tkinter.filedialog import askopenfilename, asksaveasfilename
 
 @dataclass
 class Participant:
+    """
+    First 4 arguments may be set in spreadsheet. _possible_recipients should only be set by the picker.
+    """
     name: str
     recipient: str = ''
     excluded: set = field(default_factory=set)
-    possible_recipients: set = field(default_factory=set)
+    email_addr: str = ''
+    _possible_recipients: set = field(default_factory=set)
 
     def __str__(self):
-        return f"{self.name} gives a gift to {self.recipient}. They could not gift to {self.excluded}, and had {self.possible_recipients} to choose from. "
+        return f"{self.name} gives a gift to {self.recipient}. They could not gift to {self.excluded}, and had {self._possible_recipients} to choose from. "
 
 
 class Santa:
@@ -28,31 +32,34 @@ class Santa:
         self._names = {person.name for person in people}
 
     def give_gifts(self):
-        """Finds forced pairings first, assigns to members with exclusions listed next, then randomly assigns everyone
-        leftover."""
+        """
+        Finds forced pairings first, assigns to members with exclusions listed next, then randomly assigns everyone
+        leftover. Does so in a non mutable way for the _people list, need to check if it's mutating each participant
+        object in the list, likely yes.
+        """
         for person in self._people:
             if person.recipient and person.recipient in self._names:
                 self._finished.append(person)
             else:
                 person.excluded.update({person.name})
-                person.possible_recipients = self._names - person.excluded - self.received
+                person._possible_recipients = self._names - person.excluded - self.received
                 self._unmatched.append(person)
 
         # Sort unmatched list so more restrictive entries will be paired first
-        self._unmatched = sorted(self._unmatched, key=lambda matcher: len(matcher.possible_recipients), reverse=True)
+        self._unmatched = sorted(self._unmatched, key=lambda matcher: len(matcher._possible_recipients), reverse=True)
 
         while self._unmatched:
             person = self._unmatched.pop()  # person has the least possible options currently
             try:
-                person.recipient = person.possible_recipients.pop()
+                person.recipient = person._possible_recipients.pop()
                 self.received.update({person.recipient})
                 for giver in self._unmatched:
                     # removes candidate from options for others
-                    giver.possible_recipients.difference_update({person.recipient})
+                    giver._possible_recipients.difference_update({person.recipient})
                 # The unmatched list needs to be sorted again to prevent running into a person with no options at the
                 # end of the list.
 
-                self._unmatched = sorted(self._unmatched, key=lambda matcher: len(matcher.possible_recipients), reverse=True)
+                self._unmatched = sorted(self._unmatched, key=lambda matcher: len(matcher._possible_recipients), reverse=True)
 
             except KeyError:
                 person.recipient = "!!!This person had no available options, revise initial spreadsheet.!!!"
@@ -61,6 +68,17 @@ class Santa:
 
         return self._finished
 
+    def email_pairings(self):
+        """
+        Sends email of which recipient a person will give gifts to.
+        """
+        pass
+
+    def __repr__(self) -> str:
+        return f"""Here is the starting '_people_' list for this picker: {self._people}
+        
+
+        And here is the finished pairing list: {self._finished}"""
 
 class SheetError(Exception):
     """Raised when the input sheet is unsuitable for creating pairings."""
@@ -78,9 +96,12 @@ def check_people(people: list):
     givers = [entry[0].title() for entry in people]
     if len(givers) != len(set(givers)):
         raise SheetError("Duplicate names are present, fix input sheet.")
+
+    # Returns list of participants with titled names, a recipient, a list of exclusions, and then an email or "" if empty.
     return [Participant(entry[0].title(),
                         str(entry[1]).title() if len(entry) >= 2 else '',
-                        set(entry[2].title().split(', ')) if len(entry) > 2 else set()) for entry in people]
+                        set(entry[2].title().split(', ')) if len(entry) > 2 else set(),
+                        entry[3] if len(entry) > 3 else "") for entry in people]
 
 
 def get_people(source_name):
@@ -106,6 +127,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("infile", nargs="?", default=None)
     parser.add_argument("outfile", nargs="?", default=None)
+    parser.add_argument("-v", "--verbose", help="Prints the picker object values", action="store_true")
     args = parser.parse_args()
     if not args.infile:
         # tkinter file dialog taken from Stack Overflow
@@ -117,10 +139,13 @@ def main():
     gift_picker = Santa(gift_people)
     out_list = [(paired.name, paired.recipient) for paired in gift_picker.give_gifts()]
 
-    destination = Path(args.outfile) if args.outfile else Path(asksaveasfilename())
-    destination = destination.with_suffix(".csv")
+    if args.verbose:
+        print(gift_picker)
+    else:
+        destination = Path(args.outfile) if args.outfile else Path(asksaveasfilename())
+        destination = destination.with_suffix(".csv")
 
-    create_out_sheet(destination, out_list)
+        create_out_sheet(destination, out_list)
 
 
 if __name__ == "__main__":
