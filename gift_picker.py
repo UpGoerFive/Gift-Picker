@@ -17,8 +17,8 @@ class Participant:
     email_addr: str = ''
     _possible_recipients: set = field(default_factory=set)
 
-    def __str__(self):
-        return f"{self.name} gives a gift to {self.recipient}. They could not gift to {self.excluded}, and had {self._possible_recipients} to choose from. "
+    def __repr__(self):
+        return f"{self.name} gives a gift to {self.recipient}. They could not gift to {self.excluded}, and had {self._possible_recipients} to choose from.\n"
 
 
 class Santa:
@@ -75,10 +75,10 @@ class Santa:
         pass
 
     def __repr__(self) -> str:
-        return f"""Here is the starting '_people_' list for this picker: {self._people}
+        return f"""Here is the starting '_people_' list for this picker: {*self._people,}
         
 
-        And here is the finished pairing list: {self._finished}"""
+        And here is the finished pairing list: {*self._finished,}"""
 
 class SheetError(Exception):
     """Raised when the input sheet is unsuitable for creating pairings."""
