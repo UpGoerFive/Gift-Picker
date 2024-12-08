@@ -1,7 +1,8 @@
 from dataclasses import dataclass, field
 import csv
 import argparse
-import smtplib, ssl
+import smtplib
+import yagmail
 from email.message import EmailMessage
 from pathlib import Path
 from tkinter import Tk
@@ -71,14 +72,14 @@ class Santa:
         return self._finished
 
 
-    def email_pairings(self, port=1025):
+    def email_pairings(self):
         """
         Sends email of which recipient a person will give gifts to.
         """
-        context = ssl.create_default_context()
+        yag = yagmail.SMTP("secretsantamailerchampmar@gmail.com", oauth2_file="./oauth2_creds.json")
 
-        with smtplib.SMTP_SSL("localhost", port, context=context) as server:
-            server.sendmail("test@local.com", "nwmartin42@gmail.com", "testing emails")
+        for person in self._finished:
+            yag.send(person.email_addr, "Secret Santa 2024", f"Hello {person.name}, you are giving a gift to {person.recipient} for this year's Secret Santa.")
 
 
     def __repr__(self) -> str:
@@ -153,13 +154,14 @@ def main():
 
     if args.verbose:
         print(gift_picker)
-    elif args.email:
+    
+    if args.email:
         gift_picker.email_pairings()
-    else:
-        destination = Path(args.outfile) if args.outfile else Path(asksaveasfilename())
-        destination = destination.with_suffix(".csv")
+   
+    destination = Path(args.outfile) if args.outfile else Path(asksaveasfilename())
+    destination = destination.with_suffix(".csv")
 
-        create_out_sheet(destination, out_list)
+    create_out_sheet(destination, out_list)
 
 
 if __name__ == "__main__":
