@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 import csv
 import argparse
+import smtplib, ssl
+from email.message import EmailMessage
 from pathlib import Path
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename, asksaveasfilename
@@ -34,8 +36,8 @@ class Santa:
     def give_gifts(self):
         """
         Finds forced pairings first, assigns to members with exclusions listed next, then randomly assigns everyone
-        leftover. Does so in a non mutable way for the _people list, need to check if it's mutating each participant
-        object in the list, likely yes.
+        leftover. Mutates the participant objects so TODO either refactor to not mutate participant objects or remove
+        extraneous _finished list.
         """
         for person in self._people:
             if person.recipient and person.recipient in self._names:
@@ -68,26 +70,35 @@ class Santa:
 
         return self._finished
 
-    def email_pairings(self):
+
+    def email_pairings(self, port=1025):
         """
         Sends email of which recipient a person will give gifts to.
         """
-        pass
+        context = ssl.create_default_context()
+
+        with smtplib.SMTP_SSL("localhost", port, context=context) as server:
+            server.sendmail("test@local.com", "nwmartin42@gmail.com", "testing emails")
+
 
     def __repr__(self) -> str:
-        return f"""Here is the starting '_people_' list for this picker: {*self._people,}
-        
-
-        And here is the finished pairing list: {*self._finished,}"""
+        return f"""
+        Here is the starting '_people_' list for this picker: {*self._people,}\n\n\n
+        And here is the finished pairing list: {*self._finished,}
+        """
 
 class SheetError(Exception):
-    """Raised when the input sheet is unsuitable for creating pairings."""
+    """
+    Raised when the input sheet is unsuitable for creating pairings.
+    """
     def __init__(self, message):
         self.message = message
 
 
 def check_people(people: list):
-    """Checks list of entry rows for usability and strips column headings."""
+    """
+    Checks list of entry rows for usability and strips column headings.
+    """
     if not people:
         raise SheetError("Sheet is empty.")
     first_entry = people[0][0].title()  # Checking for column titles.
@@ -128,6 +139,7 @@ def main():
     parser.add_argument("infile", nargs="?", default=None)
     parser.add_argument("outfile", nargs="?", default=None)
     parser.add_argument("-v", "--verbose", help="Prints the picker object values", action="store_true")
+    parser.add_argument("-e", "--email", help = "Emails participants their recipients", action="store_true")
     args = parser.parse_args()
     if not args.infile:
         # tkinter file dialog taken from Stack Overflow
@@ -141,6 +153,8 @@ def main():
 
     if args.verbose:
         print(gift_picker)
+    elif args.email:
+        gift_picker.email_pairings()
     else:
         destination = Path(args.outfile) if args.outfile else Path(asksaveasfilename())
         destination = destination.with_suffix(".csv")
