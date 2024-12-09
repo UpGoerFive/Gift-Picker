@@ -1,4 +1,4 @@
-from gift_picker import Santa, SheetError, Participant, check_people, create_sheet
+from gift_picker import Santa, SheetError, Participant, check_people, get_people
 import pytest
 import random
 from pathlib import Path
@@ -11,7 +11,7 @@ from pathlib import Path
                         Path(r"Testfiles/OneSolutionSantatest - Sheet1.csv"),
                         Path(r"Testfiles/SantatestNoRestrictions - Sheet1.csv")])
 def sheet_data(request):
-    return check_people(create_sheet(request.param))
+    return check_people(get_people(request.param))
 
 
 @pytest.fixture()
